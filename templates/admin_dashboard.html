@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card">
+    <h1>Admin Dashboard</h1>
+    <p>Manage customers and service requests.</p>
+</section>
+
+<section class="card">
+    <h2>Customers</h2>
+    {% if customers %}
+        <div class="table">
+            <div class="table-row header">
+                <div>Name</div>
+                <div>Email</div>
+                <div>Actions</div>
+            </div>
+            {% for customer in customers %}
+                <div class="table-row">
+                    <div>{{ customer['name'] }}</div>
+                    <div>{{ customer['email'] }}</div>
+                    <div>
+                        <form method="post" action="{{ url_for('delete_customer', customer_id=customer['id']) }}">
+                            <button type="submit" class="btn danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No customers registered yet.</p>
+    {% endif %}
+</section>
+
+<section class="card">
+    <h2>Service Requests</h2>
+    {% if requests %}
+        <div class="table">
+            <div class="table-row header">
+                <div>Customer</div>
+                <div>Title</div>
+                <div>Status</div>
+                <div>Submitted</div>
+                <div>Actions</div>
+            </div>
+            {% for req in requests %}
+                <div class="table-row">
+                    <div>
+                        <strong>{{ req['customer_name'] }}</strong><br>
+                        <small>{{ req['customer_email'] }}</small>
+                    </div>
+                    <div>
+                        <strong>{{ req['title'] }}</strong><br>
+                        <small>{{ req['description'] }}</small>
+                    </div>
+                    <div>
+                        <form method="post" action="{{ url_for('update_request_status', request_id=req['id']) }}" class="inline-form">
+                            <select name="status">
+                                {% for status in ['Pending', 'Approved', 'Completed'] %}
+                                    <option value="{{ status }}" {% if status == req['status'] %}selected{% endif %}>
+                                        {{ status }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn">Update</button>
+                        </form>
+                    </div>
+                    <div>{{ req['created_at'] }}</div>
+                    <div>
+                        <form method="post" action="{{ url_for('delete_request', request_id=req['id']) }}">
+                            <button type="submit" class="btn danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No service requests found.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card">
+    <h1>Customer Dashboard</h1>
+    <p>Welcome, {{ session.get('name') }}! Submit and track your service requests below.</p>
+</section>
+
+<section class="grid">
+    <div class="card">
+        <h2>Submit a Service Request</h2>
+        <form method="post" action="{{ url_for('new_request') }}" class="form">
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" required>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+
+            <button type="submit" class="btn">Submit Request</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Update Profile</h2>
+        <form method="post" action="{{ url_for('update_profile') }}" class="form">
+            <label for="profile-name">Name</label>
+            <input id="profile-name" name="name" type="text" value="{{ customer['name'] }}" required>
+
+            <label for="profile-email">Email</label>
+            <input id="profile-email" name="email" type="email" value="{{ customer['email'] }}" required>
+
+            <label for="profile-password">New Password (optional)</label>
+            <input id="profile-password" name="password" type="password">
+
+            <button type="submit" class="btn">Update Profile</button>
+        </form>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Your Requests</h2>
+    {% if requests %}
+        <div class="table">
+            <div class="table-row header">
+                <div>Title</div>
+                <div>Description</div>
+                <div>Status</div>
+                <div>Submitted</div>
+            </div>
+            {% for item in requests %}
+                <div class="table-row">
+                    <div>{{ item['title'] }}</div>
+                    <div>{{ item['description'] }}</div>
+                    <div><span class="status {{ item['status']|lower }}">{{ item['status'] }}</span></div>
+                    <div>{{ item['created_at'] }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have not submitted any requests yet.</p>
+    {% endif %}
+</section>
+{% endblock %}
